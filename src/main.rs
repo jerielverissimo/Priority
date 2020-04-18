@@ -5,6 +5,7 @@ extern crate glib;
 mod utils;
 mod application;
 mod config;
+mod window;
 
 use application::Application;
 
