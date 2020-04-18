@@ -4,17 +4,20 @@ use gtk::prelude::*;
 use std::env;
 
 use crate::config;
+use crate::window::Window;
 
 pub struct Application {
     app: gtk::Application,
+    window: Window,
 }
 
 impl Application {
     pub fn new() -> Self {
         let app = gtk::Application::new(Some(config::APP_ID), gio::ApplicationFlags::FLAGS_NONE)
             .expect("Application::new failed");
+        let window = Window::new();
 
-        let application = Self { app };
+        let application = Self { app, window };
 
         application.setup_signals();
         application.setup_gactions();
@@ -35,14 +38,12 @@ impl Application {
     }
 
     fn setup_signals(&self) {
-        self.app.connect_activate(|app| {
-            let win = gtk::ApplicationWindow::new(app);
-
-            win.set_default_size(320, 240);
-            win.set_title("Priority");
-
-            win.show_all();
-        });
+        self.app
+            .connect_activate(clone!(@weak self.window.widget as window => move |app| {
+                window.set_application(Some(app));
+                app.add_window(&window);
+                window.present();
+            }));
     }
 
     pub fn run(&self) {
