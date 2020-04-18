@@ -21,6 +21,7 @@ impl Application {
 
         application.setup_signals();
         application.setup_gactions();
+        application.setup_css();
 
         application
     }
@@ -44,6 +45,16 @@ impl Application {
                 app.add_window(&window);
                 window.present();
             }));
+    }
+
+    fn setup_css(&self) {
+        let provider = gtk::CssProvider::new();
+        provider
+            .load_from_data(include_str!("../data/resources/style.css").as_bytes())
+            .expect("Failed to load CSS");
+        if let Some(screen) = gdk::Screen::get_default() {
+            gtk::StyleContext::add_provider_for_screen(&screen, &provider, 500);
+        }
     }
 
     pub fn run(&self) {
