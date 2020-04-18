@@ -1,4 +1,5 @@
 mod application;
+mod config;
 
 use application::Application;
 
