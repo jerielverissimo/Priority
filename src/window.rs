@@ -1,9 +1,12 @@
 use gtk::prelude::*;
 
-use crate::config::APP_ID;
+use std::collections::HashMap;
+
+use crate::widgets::{window_headerbar::WindowHeaderbar, InnerWidget};
 
 pub struct Window {
     pub widget: gtk::ApplicationWindow,
+    pub widgets: HashMap<&'static str, Box<dyn InnerWidget>>,
     builder: gtk::Builder,
 }
 
@@ -13,21 +16,22 @@ impl Window {
         let builder = gtk::Builder::new_from_string(glade_src);
         get_widget!(builder, gtk::ApplicationWindow, window);
 
-        let window_widget = Window {
+        let widgets = HashMap::new();
+
+        let mut window_widget = Window {
             widget: window,
+            widgets,
             builder,
         };
 
-        //window_widget.load_widgets();
-        //window_widget.init();
+        window_widget.load_widgets();
         window_widget
     }
 
     fn load_widgets(&mut self) {
-        unimplemented!();
-    }
-
-    fn init(&self) {
-        unimplemented!();
+        self.widgets.insert(
+            "window_headerbar",
+            Box::new(WindowHeaderbar::new(&self.builder)),
+        );
     }
 }
