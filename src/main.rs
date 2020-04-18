@@ -1,6 +1,10 @@
+#[macro_use]
+extern crate glib;
+
+#[macro_use]
+mod utils;
 mod application;
 mod config;
-mod utils;
 
 use application::Application;
 
