@@ -1,5 +1,5 @@
 [package]
-name = "Priority"
+name = "priority"
 version = "0.1.0"
 authors = ["Jeriel <jeriel.verissimo@protonmail.com>"]
 edition = "2018"
