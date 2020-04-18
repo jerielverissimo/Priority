@@ -2,7 +2,7 @@ use gtk::prelude::*;
 
 use std::collections::HashMap;
 
-use crate::widgets::{window_headerbar::WindowHeaderbar, InnerWidget};
+use crate::widgets::*;
 
 pub struct Window {
     pub widget: gtk::ApplicationWindow,
@@ -29,9 +29,11 @@ impl Window {
     }
 
     fn load_widgets(&mut self) {
-        self.widgets.insert(
-            "window_headerbar",
-            Box::new(WindowHeaderbar::new(&self.builder)),
-        );
+        self.insert_widget("window_headerbar", box WindowHeaderbar::new(&self.builder));
+        self.insert_widget("main_stack", box MainStack::new(&self.builder));
+    }
+
+    fn insert_widget(&mut self, name: &'static str, widget: Box<dyn InnerWidget>) {
+        self.widgets.insert(name, widget);
     }
 }
