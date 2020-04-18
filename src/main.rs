@@ -1,3 +1,13 @@
+mod application;
+
+use application::Application;
+
 fn main() {
-    println!("Hello, world!");
+    glib::set_application_name("Primary");
+    glib::set_prgname(Some("priority"));
+
+    gtk::init().expect("Unable to start GTK3");
+
+    let app = Application::new();
+    app.run();
 }
