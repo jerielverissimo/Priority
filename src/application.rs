@@ -3,17 +3,16 @@ use gtk::prelude::*;
 
 use std::env;
 
+use crate::config;
+
 pub(crate) struct Application {
     app: gtk::Application,
 }
 
 impl Application {
     pub(crate) fn new() -> Self {
-        let app = gtk::Application::new(
-            Some("com.github.jerielverissimo.priority"),
-            gio::ApplicationFlags::FLAGS_NONE,
-        )
-        .expect("Application::new failed");
+        let app = gtk::Application::new(Some(config::APP_ID), gio::ApplicationFlags::FLAGS_NONE)
+            .expect("Application::new failed");
 
         let application = Self { app };
 
