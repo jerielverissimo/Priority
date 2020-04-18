@@ -1,5 +1,6 @@
 mod application;
 mod config;
+mod utils;
 
 use application::Application;
 
