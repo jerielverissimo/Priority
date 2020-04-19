@@ -23,11 +23,12 @@ impl CardList {
         board_list_box.add(&sw);
 
         let cards = gtk::ListBox::new();
+        cards.get_style_context().add_class("list");
         let viewport = Self::setup_viewport(&cards);
         sw.add(&viewport);
 
-        let btn_add_card = gtk::Button::new_with_label("⁺");
-        btn_add_card.set_margin_bottom(5);
+        let btn_add_card = Self::setup_btn_add_card();
+
         cards.insert(&btn_add_card, -1);
         cards.set_sort_func(Some(box |head, tail| head.get_index() - tail.get_index()));
 
@@ -68,6 +69,24 @@ impl CardList {
         viewport.add(cards);
 
         viewport
+    }
+
+    fn setup_btn_add_card() -> gtk::Button {
+        let btn_add_card = gtk::Button::new();
+        let label = gtk::Label::new(Some("+"));
+
+        label.set_halign(gtk::Align::Center);
+        label.set_valign(gtk::Align::Center);
+        label.set_justify(gtk::Justification::Center);
+
+        btn_add_card.add(&label);
+
+        btn_add_card.set_halign(gtk::Align::Center);
+        btn_add_card.set_valign(gtk::Align::Center);
+        btn_add_card.get_style_context().add_class("btn-add-card");
+        //btn_add_card.get_style_context().add_class("circular");
+
+        btn_add_card
     }
 }
 
