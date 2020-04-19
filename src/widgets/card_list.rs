@@ -26,7 +26,10 @@ impl CardList {
         let viewport = Self::setup_viewport(&cards);
         sw.add(&viewport);
 
-        let btn_add_card = Self::setup_button(&board_list_box);
+        let btn_add_card = gtk::Button::new_with_label("⁺");
+        btn_add_card.set_margin_bottom(5);
+        cards.insert(&btn_add_card, -1);
+        cards.set_sort_func(Some(box |head, tail| head.get_index() - tail.get_index()));
 
         board_list_box.show_all();
 
@@ -65,16 +68,6 @@ impl CardList {
         viewport.add(cards);
 
         viewport
-    }
-
-    fn setup_button(board_list: &gtk::Box) -> gtk::Button {
-        let btn_add_card = gtk::Button::new_with_label("⁺");
-        btn_add_card.set_margin_bottom(5);
-
-        board_list.add(&btn_add_card);
-        board_list.set_child_packing(&btn_add_card, false, true, 10, gtk::PackType::Start);
-
-        btn_add_card
     }
 }
 
