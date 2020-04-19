@@ -3,30 +3,39 @@ use gtk::WidgetExt;
 
 use super::InnerWidget;
 
+#[derive(Clone)]
 pub struct CardList {
     pub cards: gtk::ListBox,
     pub headerbar: gtk::ButtonBox,
+    pub board_list_box: gtk::Box,
+    pub btn_add_card: gtk::Button,
     name: String,
-    board_list_box: gtk::Box,
 }
 
 impl CardList {
     pub fn new(name: String) -> Self {
-        let board_list_box = Self::setup_board_list();
+        let board_list_box = gtk::Box::new(gtk::Orientation::Vertical, 5);
         let headerbar = Self::setup_headerbar(&name);
 
         board_list_box.add(&headerbar);
 
-        let sw = Self::setup_scrollbar(&board_list_box);
+        let sw = Self::setup_scrollbar();
         board_list_box.add(&sw);
 
         let cards = gtk::ListBox::new();
+        let viewport = Self::setup_viewport(&cards);
+        sw.add(&viewport);
+
+        let btn_add_card = Self::setup_button(&board_list_box);
+
+        board_list_box.show_all();
 
         CardList {
             cards,
             headerbar,
             name,
             board_list_box,
+            btn_add_card,
         }
     }
 
@@ -41,40 +50,31 @@ impl CardList {
         headerbar
     }
 
-    fn setup_scrollbar(board_list: &gtk::Box) -> gtk::ScrolledWindow {
-        let scrolled_window = gtk::ScrolledWindow::new(gtk::NONE_ADJUSTMENT, gtk::NONE_ADJUSTMENT);
-
+    fn setup_scrollbar() -> gtk::ScrolledWindow {
+        let sw = gtk::ScrolledWindow::new(gtk::NONE_ADJUSTMENT, gtk::NONE_ADJUSTMENT);
         #[cfg(any(feature = "v3_22"))]
-        scrolled_window.set_propagate_natural_width(true);
-        scrolled_window.set_min_content_width(250);
-        scrolled_window.set_vexpand_set(true);
-        scrolled_window.set_vexpand(true);
-
-        let viewport = Self::setup_viewport(board_list);
-
-        scrolled_window.add(&viewport);
-
-        scrolled_window
+        sw.set_propagate_natural_width(true);
+        sw.set_min_content_width(250);
+        sw.set_vexpand_set(true);
+        sw.set_vexpand(true);
+        sw
     }
 
-    fn setup_viewport(board_list: &gtk::Box) -> gtk::Viewport {
+    fn setup_viewport(cards: &gtk::ListBox) -> gtk::Viewport {
         let viewport = gtk::Viewport::new(gtk::NONE_ADJUSTMENT, gtk::NONE_ADJUSTMENT);
-        viewport.add(board_list);
+        viewport.add(cards);
 
         viewport
     }
 
-    fn setup_board_list() -> gtk::Box {
-        let board_list = gtk::Box::new(gtk::Orientation::Vertical, 5);
-
-        let btn_add_card = gtk::Button::new_with_label("+");
+    fn setup_button(board_list: &gtk::Box) -> gtk::Button {
+        let btn_add_card = gtk::Button::new_with_label("⁺");
         btn_add_card.set_margin_bottom(5);
+
         board_list.add(&btn_add_card);
-
         board_list.set_child_packing(&btn_add_card, false, true, 10, gtk::PackType::Start);
-        board_list.show_all();
 
-        board_list
+        btn_add_card
     }
 }
 
