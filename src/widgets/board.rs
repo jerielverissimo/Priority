@@ -54,7 +54,7 @@ impl Board {
 
                 list.btn_add_card.connect_clicked(clone!(@strong list => move |_| {
                     // TODO: get card name from user
-                    let card = Card::new(String::from("Test"));
+                    let card = Card::new(String::from("Lorem ipsum dolor sit amet, consectetur adipiscing elit"));
                     list.cards.add(&card.row);
                     list.cards.show_all();
                     println!("Card Added!");

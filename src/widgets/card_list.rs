@@ -47,9 +47,13 @@ impl CardList {
         let headerbar = gtk::ButtonBox::new(gtk::Orientation::Horizontal);
 
         let list_name = gtk::Label::new(Some(name));
+        list_name.set_justify(gtk::Justification::Left);
         list_name.set_halign(gtk::Align::Start);
+        list_name.set_xalign(0.0);
+        list_name.set_valign(gtk::Align::Start);
 
         headerbar.add(&list_name);
+        headerbar.set_child_packing(&list_name, false, true, 5, gtk::PackType::Start);
 
         headerbar
     }
@@ -83,8 +87,7 @@ impl CardList {
 
         btn_add_card.set_halign(gtk::Align::Center);
         btn_add_card.set_valign(gtk::Align::Center);
-        btn_add_card.get_style_context().add_class("btn-add-card");
-        //btn_add_card.get_style_context().add_class("circular");
+        btn_add_card.get_style_context().add_class("btn-add");
 
         btn_add_card
     }
