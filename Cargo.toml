@@ -12,7 +12,12 @@ glib = "0.9.3"
 gdk = "0.12.1"
 gdk-pixbuf = "0.8.0"
 pango = "0.8.0"
+uuid = { version = "0.8.1", features = ["v4"] }
 
 [dependencies.gtk]
 version = "0.8.1"
 feature = ["v3_22"] 
+
+[dependencies.cairo-rs]
+version = "0.8.1"
+features = ["png"]

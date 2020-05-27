@@ -1,4 +1,6 @@
+use cairo;
 use gtk::prelude::*;
+use uuid::Uuid;
 
 use super::InnerWidget;
 
@@ -7,6 +9,7 @@ pub struct Card {
     pub row: gtk::ListBoxRow,
     pub title: String,
     pub description: Option<String>,
+    pub id: Uuid,
     img: Option<gtk::Image>,
     labels: gtk::Box,
 }
@@ -30,14 +33,19 @@ impl Card {
 
         let labels = Self::setup_labels();
 
-        Self::setup_card(&row, &title, &description, &img, &labels);
+        let id = Uuid::new_v4();
+
+        Self::setup_card(&row, &title, &description, &img, &labels, &id);
 
         row.show_all();
+
+
 
         Card {
             row,
             title,
             description,
+            id,
             img: Some(img),
             labels,
         }
@@ -49,6 +57,7 @@ impl Card {
         description: &Option<String>,
         img: &gtk::Image,
         labels: &gtk::Box,
+        id: &Uuid,
     ) {
         row.set_widget_name("card"); // add css class card
 
@@ -60,13 +69,48 @@ impl Card {
         let description: &str = &description.as_ref().unwrap();
         let description = gtk::Label::new(Some(description));
 
+        let handle = gtk::EventBox::new();
+        handle.add(&card_box);
+
         card_box.add(img);
         card_box.set_child_packing(img, false, true, 5, gtk::PackType::Start);
         card_box.add(&title);
-        //card_box.add(&description);
+        card_box.add(&description);
         card_box.add(labels);
 
-        row.add(&card_box);
+        let targets = vec![gtk::TargetEntry::new(
+            "GTK_LIST_BOX_ROW",
+            gtk::TargetFlags::SAME_APP,
+            0,
+        )];
+
+        handle.drag_source_set(
+            gdk::ModifierType::BUTTON1_MASK,
+            &targets,
+            gdk::DragAction::COPY,
+        );
+
+        handle.connect_drag_begin(move |w, ctx| {
+            println!("Begin");
+            let ww = w.get_allocated_width();
+            let wh = w.get_allocated_height();
+            let image = cairo::ImageSurface::create(cairo::Format::ARgb32, ww, wh).unwrap();
+            let g = cairo::Context::new(&image);
+            g.set_source_rgba(1.0, 1.0, 1.0, 0.8);
+            g.rectangle(0.0,0.0,ww as f64, wh as f64);
+            g.fill();
+
+            w.draw(&g);
+
+            ctx.drag_set_icon_surface(&image);
+        });
+
+        handle.connect_drag_data_get(clone!(@strong id => move |_, _, data, _, _| {
+            println!("Got");
+            data.set_text(&id.to_string());
+        }));
+
+        row.add(&handle);
     }
 
     fn setup_labels() -> gtk::Box {

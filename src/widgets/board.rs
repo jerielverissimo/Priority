@@ -50,15 +50,23 @@ impl Board {
                     gtk::PackType::Start,
                 );
 
-                board.board_list.set_child_position(&button_box_add_list, btn_position + 1);
+                {
+                    board.board_list.set_child_position(&button_box_add_list, btn_position + 1);
+                }
 
-                list.btn_add_card.connect_clicked(clone!(@strong list => move |_| {
+                let l = std::cell::RefCell::new(list.clone());
+
+                list.btn_add_card.connect_clicked(clone!(@strong l => move |_| {
                     // TODO: get card name from user
                     let card = Card::new(String::from("Lorem ipsum dolor sit amet, consectetur adipiscing elit"));
-                    list.cards.add(&card.row);
-                    list.cards.show_all();
+                    l.borrow_mut().add(card);
                     println!("Card Added!");
                 }));
+
+                list.connect_drop(&list.widget, move |card_id| {
+                    if let Some(card) = l.borrow_mut().remove(&card_id) {}
+                });
+
                 println!("List Added!");
             }));
     }
